@@ -22,8 +22,8 @@ from mysql.connector.connection import MySQLConnection
 # from mysql.connector.pooling import PooledMySQLConnection
 import os
 import re
-from typing import List, Tuple, Union
-# from typing import cast
+from typing import cast, List, Tuple
+# from typing import Union
 
 
 # Define a constant tuple for PII fields that should be redacted in logs.
@@ -164,12 +164,12 @@ def get_db() -> connection.MySQLConnection:
 
     # Establish and return the database
     # connection using the provided credentials.
-    return mysql.connector.connect(
+    return cast(MySQLConnection, mysql.connector.connect(
         user=db_username,
         password=db_password,
         host=db_host,
         database=db_name
-    )
+    ))
 
 
 def main():
