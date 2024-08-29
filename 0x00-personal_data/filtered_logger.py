@@ -15,11 +15,11 @@ and logs it with sensitive fields obfuscated.
 
 import logging
 import mysql.connector
-# from mysql.connector import connection
-# from mysql.connector.connection import MySQLConnection
-from mysql.connector.abstracts import MySQLConnectionAbstract
-from mysql.connector import MySQLConnection
-from mysql.connector.pooling import PooledMySQLConnection
+from mysql.connector import connection
+from mysql.connector.connection import MySQLConnection
+# from mysql.connector.abstracts import MySQLConnectionAbstract
+# from mysql.connector import MySQLConnection
+# from mysql.connector.pooling import PooledMySQLConnection
 import os
 import re
 from typing import List, Tuple, Union
@@ -139,8 +139,8 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-# def get_db() -> connection.MySQLConnection:
-def get_db() -> Union[MySQLConnectionAbstract, PooledMySQLConnection]:
+# def get_db() -> Union[MySQLConnectionAbstract, PooledMySQLConnection]:
+def get_db() -> connection.MySQLConnection:
     """
     Connect to the MySQL database using credentials from environment variables.
 
