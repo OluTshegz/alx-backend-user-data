@@ -82,28 +82,27 @@ class Auth:
         # If the path is not in excluded paths, it requires authentication
         # return True
 
-        if not path or not excluded_paths:
-            return True
+        if excluded_paths and path:
+            if path[-1] == '/':
+                new_path = path[:-1]
+            else:
+                new_path = path
+            new_excluded_path = []
+            for element in excluded_paths:
+                if element[-1] == '/':
+                    new_excluded_path.append(element[:-1])
+                if element[-1] == '*':
+                    if new_path.startswith(element[:-1]):
+                        return False
 
-        # Normalize path by ensuring it ends with a '/'
-        if not path.endswith('/'):
-            path += '/'
-
-        for excluded_path in excluded_paths:
-            # Normalize excluded_path by ensuring it ends with a '/'
-            if not excluded_path.endswith('/'):
-                excluded_path += '/'
-
-            # Handle wildcard paths
-            if excluded_path.endswith("*"):
-                if path.startswith(excluded_path[:-1]):
-                    return False
-
-            # Handle exact match and prefix matching
-            if path.startswith(excluded_path):
+            if new_path not in new_excluded_path:
+                return True
+            else:
                 return False
-
-        return True
+        if path is None:
+            return True
+        if not excluded_paths:
+            return True
 
     # def authorization_header(self, request:
     #                         Optional[str] = None) -> Optional[str]:
