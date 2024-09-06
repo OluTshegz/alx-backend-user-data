@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from models.user import User
 from os import getenv
 
+
 # POST /auth_session/login route definition
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
@@ -60,13 +61,16 @@ def login():
 
     return response
 
+
 # DELETE /auth_session/logout route definition
-@app_views.route('/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'], strict_slashes=False)
 def logout():
     """
     Handles the deletion of a user session (logout).
     """
-    # Import auth to use the destroy_session method (avoiding circular import issues)
+    # Import auth to use the destroy_session
+    # method (avoiding circular import issues)
     from api.v1.app import auth
 
     # Call the destroy_session method to delete the session
@@ -74,5 +78,6 @@ def logout():
         # If destroy_session returns False, abort with a 404 error
         abort(404)
 
-    # Return an empty JSON dictionary with a status code of 200 if logout is successful
+    # Return an empty JSON dictionary with a
+    # status code of 200 if logout is successful
     return jsonify({}), 200

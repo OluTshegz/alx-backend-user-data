@@ -87,19 +87,19 @@ class SessionAuth(Auth):
 
         # Retrieve the session ID from the cookie in the request
         session_id = self.session_cookie(request)
-        
+
         # If the session ID is not found in the request cookies, return False
         if session_id is None:
             return False
 
         # Retrieve the user ID associated with the session ID
         user_id = self.user_id_for_session_id(session_id)
-        
+
         # If no user ID is associated with the session ID, return False
         if user_id is None:
             return False
 
         # Delete the session ID from the session dictionary
         del self.user_id_by_session_id[session_id]
-        
+
         return True

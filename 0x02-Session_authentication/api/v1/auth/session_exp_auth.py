@@ -17,7 +17,8 @@ class SessionExpAuth(SessionAuth):
         Initialize the SessionExpAuth instance
         """
         super().__init__()
-        # Set session_duration from environment variable or default to 0 if invalid
+        # Set session_duration from environment
+        # variable or default to 0 if invalid
         try:
             self.session_duration = int(getenv('SESSION_DURATION', '0'))
         except ValueError:
@@ -42,7 +43,8 @@ class SessionExpAuth(SessionAuth):
 
     def user_id_for_session_id(self, session_id=None):
         """
-        Return the user_id associated with the session_id if the session has not expired
+        Return the user_id associated with the
+        session_id if the session has not expired
         """
         if session_id is None:
             return None
