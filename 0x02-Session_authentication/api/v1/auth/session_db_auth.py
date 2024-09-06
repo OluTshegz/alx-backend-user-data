@@ -16,6 +16,8 @@ class SessionDBAuth(SessionExpAuth):
         """
         Create a session and store it in the database
         """
+        if user_id is None:
+            return None
         session_id = super().create_session(user_id)
         if not session_id:
             return None
@@ -62,11 +64,19 @@ class SessionDBAuth(SessionExpAuth):
         if not session_id:
             return False
 
+        if not self.user_id_for_session_id(session_id):
+            return False
+
         UserSession.load_from_file()
         sessions = UserSession.search({'session_id': session_id})
         if not sessions:
             return False
 
         user_session = sessions[0]
-        user_session.remove()
+        try:
+            user_session.remove()
+            UserSession.save_to_file()
+        except Exception:
+            return False
+
         return True

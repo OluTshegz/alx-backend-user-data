@@ -33,6 +33,9 @@ def login():
         # If there is an error in searching the user, return an error response
         return jsonify({"error": "no user found for this email"}), 404
 
+    if not users:
+        return jsonify({"error": "no user found for this email"}), 404
+
     # If no user was found, return an error response
     if len(users) == 0:
         return jsonify({"error": "no user found for this email"}), 404
