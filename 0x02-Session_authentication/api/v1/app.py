@@ -2,13 +2,8 @@
 """
 Route module for the API
 """
-# from api.v1.auth.auth import Auth
-# from api.v1.auth.basic_auth import BasicAuth
-# from api.v1.auth.session_auth import SessionAuth
-# from api.v1.auth.session_exp_auth import SessionExpAuth
-# from api.v1.auth.session_db_auth import SessionDBAuth
+
 from api.v1.views import app_views
-# from models import storage
 from flask import Flask, jsonify, abort, request
 # from flask import Response
 from flask_cors import (CORS, cross_origin)
@@ -24,10 +19,10 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 # Load and assign the correct authentication class
 # based on the AUTH_TYPE environment variable
-# AUTH_TYPE = os.getenv('AUTH_TYPE', None)
 AUTH_TYPE = os.getenv('AUTH_TYPE')
 
-# Instantiate the appropriate authentication
+# Choose the right authentication system by
+# instantiating the appropriate authentication
 # class based on the environment variable
 if AUTH_TYPE == 'auth':
     from api.v1.auth.auth import Auth
@@ -38,21 +33,16 @@ elif AUTH_TYPE == 'basic_auth':
 elif AUTH_TYPE == 'session_auth':
     from api.v1.auth.session_auth import SessionAuth
     auth = SessionAuth()
+elif AUTH_TYPE == "session_exp_auth":
+    from api.v1.auth.session_exp_auth import SessionExpAuth
+    auth = SessionExpAuth()
+elif AUTH_TYPE == "session_db_auth":
+    from api.v1.auth.session_db_auth import SessionDBAuth
+    auth = SessionDBAuth()
 
 # List of paths that don't require authentication
 EXCLUDED_PATHS = ['/api/v1/status', '/api/v1/unauthorized',
                   '/api/v1/forbidden', '/api/v1/auth_session/login/']
-# `/api/v1/auth_session/login/`: this endpoint/route is not defined/created,
-# so error output is not "blocked" by an authentication system.
-# the value of the error output is 'not found'.
-
-# app.config.from_envvar('AUTH_TYPE', default='auth')
-# if app.config['AUTH_TYPE'] == 'auth':
-#     auth = Auth()
-
-# Create the auth instance based on the AUTH_TYPE environment variable
-# if app.config.get('AUTH_TYPE') == 'auth':
-#    auth = Auth()
 
 
 @app.errorhandler(404)
@@ -86,7 +76,7 @@ def before_request() -> None:
     Executed before each request
     """
     if not auth or auth is None:
-        return  # or pass, do nothing
+        return
 
     if auth:
         # Check if the request path is excluded
@@ -106,15 +96,6 @@ def before_request() -> None:
                 abort(403, description="Forbidden")
             if request.current_user is None:
                 abort(403, description="Forbidden")
-
-
-# @app.teardown_appcontext
-# def teardown_appcontext(exception):
-#     """
-#     Called after each request to remove
-#     the current SQLAlchemy session.
-#     """
-#     storage.close()
 
 
 if __name__ == "__main__":

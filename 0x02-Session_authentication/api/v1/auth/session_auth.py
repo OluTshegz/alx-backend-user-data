@@ -4,6 +4,7 @@ SessionAuth module
 """
 from uuid import uuid4
 from api.v1.auth.auth import Auth
+# from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user import User
 from typing import Optional, Type
 
@@ -75,3 +76,30 @@ class SessionAuth(Auth):
 
         # Return the User instance based on the user ID
         return User.get(user_id)
+
+    def destroy_session(self, request=None):
+        """
+        Deletes the user session/logout.
+        """
+        # Check if the request is None
+        if request is None:
+            return False
+
+        # Retrieve the session ID from the cookie in the request
+        session_id = self.session_cookie(request)
+        
+        # If the session ID is not found in the request cookies, return False
+        if session_id is None:
+            return False
+
+        # Retrieve the user ID associated with the session ID
+        user_id = self.user_id_for_session_id(session_id)
+        
+        # If no user ID is associated with the session ID, return False
+        if user_id is None:
+            return False
+
+        # Delete the session ID from the session dictionary
+        del self.user_id_by_session_id[session_id]
+        
+        return True
