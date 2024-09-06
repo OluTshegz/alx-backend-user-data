@@ -5,7 +5,6 @@ SessionExpAuth class module
 from datetime import datetime, timedelta
 from os import getenv
 from api.v1.auth.session_auth import SessionAuth
-from pygments.pygments.lexers import r
 
 
 class SessionExpAuth(SessionAuth):
@@ -17,7 +16,7 @@ class SessionExpAuth(SessionAuth):
         """
         Initialize the SessionExpAuth instance
         """
-        super().__init__()
+        # super().__init__()
         # Set session_duration from environment
         # variable or default to 0 if invalid
         try:
@@ -30,6 +29,8 @@ class SessionExpAuth(SessionAuth):
         """
         Create a new session with an expiration date
         """
+        if user_id is None:
+            return None
         # Generate session ID using the parent method
         session_id = super().create_session(user_id)
         if not session_id:
@@ -40,7 +41,7 @@ class SessionExpAuth(SessionAuth):
             "user_id": user_id,
             "created_at": datetime.now()
         }
-        self.user_id_by_session_id[session_id] = session_dict
+        SessionAuth.user_id_by_session_id[session_id] = session_dict
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
@@ -51,11 +52,11 @@ class SessionExpAuth(SessionAuth):
         if session_id is None:
             return None
 
-        if session_id not in self.user_id_by_session_id.keys():
+        if session_id not in SessionAuth.user_id_by_session_id.keys():
             return None
 
         # Retrieve the session dictionary using the session ID
-        session_dict = self.user_id_by_session_id.get(session_id)
+        session_dict = SessionAuth.user_id_by_session_id.get(session_id)
         if session_dict is None:
             return None
 
