@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
 from user import Base, User
 
@@ -58,25 +58,28 @@ class DB:
         return new_user
 
     def find_user_by(self, **kwargs) -> User:
-        """Find a user by arbitrary keyword arguments.
+        """Finds a user by the given keyword arguments.
 
         Args:
-            **kwargs: Arbitrary keyword arguments to query the user.
+            **kwargs: Arbitrary keyword arguments to filter the users.
 
         Returns:
-            User: The first user matching the query.
+            User: The first User object that matches the filter criteria.
 
         Raises:
-            NoResultFound: If no user matches the query.
-            InvalidRequestError: If invalid query arguments are provided.
+            NoResultFound: If no user is found.
+            InvalidRequestError: If invalid query arguments are passed.
         """
-        if not kwargs:
-            raise InvalidRequestError
-
-        user = self._session.query(User).filter_by(**kwargs).first()
-        if not user:
-            raise NoResultFound
-        return user
+        session = self._session
+        try:
+            query = session.query(User).filter_by(**kwargs)
+            user = query.first()
+            if user is None:
+                raise NoResultFound("No user found")
+            return user
+        except InvalidRequestError:
+            self._session.rollback()
+            raise
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Update a user's attributes in the database.
