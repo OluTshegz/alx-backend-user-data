@@ -47,19 +47,15 @@ class Auth:
         """
         self._db = DB()
 
-    def register_user(self, email: str, password: str) -> Union[None, User]:
-        """registering user
+    def register_user(self, email: str, password: str) -> User:
+        """register user
         """
         try:
-            # find the user with the given email
             self._db.find_user_by(email=email)
+            raise ValueError(f"User {email} already exists")
         except NoResultFound:
-            # add user to database
             return self._db.add_user(email, _hash_password(password))
 
-        else:
-            # if user already exists, throw error
-            raise ValueError('User {} already exists'.format(email))
 
     def valid_login(self, email: str, password: str) -> bool:
         """valid login credentials
