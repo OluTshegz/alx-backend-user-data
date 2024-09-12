@@ -41,13 +41,16 @@ class DB:
     from typing import Optional
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """_summary_
         """
-        new_user = User(email=email, hashed_password=hashed_password)
-        # add new user and commit to database
-        self._session.add(new_user)
-        self._session.commit()
-        return new_user
+        Adds a new user to the Database.
+        """
+        if not email or not hashed_password:
+            return
+        user = User(email=email, hashed_password=hashed_password)
+        session = self._session
+        session.add(user)
+        session.commit()
+        return user
 
     def find_user_by(self, **kwargs) -> User:
         """Find a user by arbitrary keyword arguments.
