@@ -118,7 +118,7 @@ def reset_password():
         return jsonify({"message": str(e)}), 403
 
 
-@app.route('/reset_password', methods=['PUT'])
+@app.route('/reset_password', methods=['PUT'], strict_slashes=False)
 def update_password() -> str:
     """_summary_
     Updates a user's password using a reset token
