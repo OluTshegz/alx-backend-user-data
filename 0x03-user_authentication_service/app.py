@@ -98,5 +98,44 @@ def profile():
     abort(403)
 
 
+@app.route("/reset_password", methods=["POST"])
+def reset_password():
+    """Initiates password reset process for a user."""
+    email = request.form.get("email")
+
+    if not email:
+        return abort(400, description="Missing email in request")
+
+    try:
+        reset_token = AUTH.get_reset_password_token(email)
+        # Simulate sending an email with reset token
+        # (replace with actual email sending logic)
+        # print(f"Reset password token for {email} is: {reset_token}")
+        return jsonify({"email": email, "reset_token": reset_token}), 200
+        # Send email with reset token (implementation omitted for brevity)
+        # return jsonify({"message": "Reset password instructions sent"}), 200
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 403
+
+
+@app.route("/reset_password", methods=["PUT"])
+def update_password():
+    """Updates a user's password using a reset token."""
+    email = request.form.get("email")
+    reset_token = request.form.get("reset_token")
+    new_password = request.form.get("new_password")
+
+
+    # Check for missing fields
+    if not all([email, reset_token, new_password]):
+        return abort(400, description="Missing fields in request")
+
+    try:
+        AUTH.update_password(reset_token, new_password)
+        return jsonify({"email": email, "message": "Password updated"}), 200
+    except ValueError as e:
+        return jsonify({"message": str(e)}), 403
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
