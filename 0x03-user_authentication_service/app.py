@@ -2,7 +2,7 @@
 """The Flask app"""
 
 from auth import Auth
-from flask import Flask, jsonify, Response, request, abort, make_response
+from flask import Flask, jsonify, Response, request, abort, make_response, redirect
 
 
 app = Flask(__name__)
@@ -59,6 +59,42 @@ def login() -> Response:
     # Set cookie
     response.set_cookie("session_id", new_sess)
     return response
+
+
+@app.route("/sessions", methods=["DELETE"])
+def logout():
+    """
+    Log out a user by destroying their session.
+    """
+    # Get session_id from cookie
+    session_id = request.cookies.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user:
+        # Destroy the session
+        AUTH.destroy_session(user.id)
+        # Redirect to home page
+        return redirect("/")
+
+    # If no user found, return 403 Forbidden status code
+    abort(403)
+
+
+@app.route("/profile", methods=["GET"])
+def profile():
+    """
+    Retrieve the profile of a logged-in user using their session_id.
+    """
+    # Get session_id from cookie
+    session_id = request.cookies.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user:
+        # Return user's email if found
+        return jsonify({"email": user.email}), 200
+
+    # If no user is found, return 403 Forbidden status code
+    abort(403)
 
 
 if __name__ == "__main__":
