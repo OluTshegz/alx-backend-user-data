@@ -38,19 +38,24 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    from typing import Optional
-
     def add_user(self, email: str, hashed_password: str) -> User:
+        """Add a new user to the database.
+
+        Args:
+            email (str): The email of the user.
+            hashed_password (str): The hashed password of the user.
+
+        Returns:
+            User: The User object that was created and added to the database.
         """
-        Adds a new user to the Database.
-        """
-        if not email or not hashed_password:
-            return
-        user = User(email=email, hashed_password=hashed_password)
-        session = self._session
-        session.add(user)
-        session.commit()
-        return user
+        # Create a new User instance
+        new_user = User(email=email, hashed_password=hashed_password)
+        # Add the new user to the session
+        self._session.add(new_user)
+        # Commit the session to persist the user to the database
+        self._session.commit()
+        # Return the newly created User object
+        return new_user
 
     def find_user_by(self, **kwargs) -> User:
         """Find a user by arbitrary keyword arguments.
