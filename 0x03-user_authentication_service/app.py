@@ -2,7 +2,8 @@
 """The Flask app"""
 
 from auth import Auth
-from flask import Flask, jsonify, Response, request, abort, make_response, redirect
+from flask import (Flask, jsonify, Response, request,
+                   abort, make_response, redirect)
 
 
 app = Flask(__name__)
