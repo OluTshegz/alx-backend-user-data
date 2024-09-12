@@ -38,7 +38,9 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> User:
+    from typing import Optional
+
+    def add_user(self, email: str, hashed_password: str) -> Optional[User]:
         """Add a new user to the database.
 
         Args:
@@ -46,8 +48,11 @@ class DB:
             hashed_password (str): The hashed password of the user.
 
         Returns:
-            User: The User object that was created and added to the database.
+            Optional[User]: The User object that was created and added to
+            the database, or None if email or hashed_password is empty.
         """
+        if not email or not hashed_password:
+            return None
         # Create a new User instance
         new_user = User(email=email, hashed_password=hashed_password)
         # Add the new user to the session
